@@ -1,21 +1,28 @@
 version: '3.8'
+
 services:
   nanobot:
     build: .
-    container_name: nanobot_app
+    container_name: nanobot_ai
     restart: always
+    # Aquí es donde ocurre la magia sin necesidad de archivos config.json en el repo
+    command: >
+      sh -c 'mkdir -p /root/.nanobot && 
+      echo "{\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"telegram\":{\"token\":\"$TELEGRAM_BOT_TOKEN\",\"admins\":[\"$TELEGRAM_ADMIN_ID\"]},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json && 
+      nanobot start'
+    
+    # Solo las variables que Dokploy inyectará
     environment:
-      # Añade aquí tus credenciales de IA
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      # Si usas otras, añádelas igual
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+    
+    # Solo el volumen de datos (para no perder la sesión del bot)
     volumes:
-      - nanobot_data:/root/.nanobot
-      # ESTA LÍNEA MAPEZA TU ARCHIVO LOCAL AL CONTENEDOR:
-      - ./config.json:/root/.nanobot/config.json
+      - nanobot_session_data:/root/.nanobot
+    
     ports:
       - "18790:18790"
-    # Cambiamos el comando por defecto para que inicie el servicio
-    command: ["start"] 
 
 volumes:
-  nanobot_data:
+  nanobot_session_data:
