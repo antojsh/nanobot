@@ -11,7 +11,7 @@ services:
     volumes:
       - nanobot_data:/root/.nanobot
       # ESTA LÍNEA MAPEZA TU ARCHIVO LOCAL AL CONTENEDOR:
-      - ./config/config.json:/root/.nanobot/config.json
+      - ./config.json:/root/.nanobot/config.json
     ports:
       - "18790:18790"
     # Cambiamos el comando por defecto para que inicie el servicio
