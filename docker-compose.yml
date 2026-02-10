@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  nanobot:
+    build: .
+    container_name: nanobot_app
+    restart: always
+    environment:
+      # Añade aquí tus credenciales de IA
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Si usas otras, añádelas igual
+    volumes:
+      # Esto es VITAL para que no pierdas la sesión de WhatsApp al reiniciar
+      - nanobot_data:/root/.nanobot
+    ports:
+      - "18790:18790"
+    # Cambiamos el comando por defecto para que inicie el servicio
+    command: ["start"] 
+
+volumes:
+  nanobot_data:
