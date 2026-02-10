@@ -7,17 +7,15 @@ services:
     restart: always
     entrypoint: ["/bin/sh", "-c"]
     
-    # CORRECCIÓN: Quitamos el bloque "telegram" del JSON porque Nanobot
-    # lo leerá automáticamente de las variables de entorno de abajo.
+    # SOLUCIÓN: Metemos la config de Telegram dentro de "channels"
     command: 
       - |
         mkdir -p /root/.nanobot
-        echo "{\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json
+        echo "{\"channels\":{\"telegram\":{\"enabled\":true,\"token\":\"$TELEGRAM_BOT_TOKEN\",\"admins\":[\"$TELEGRAM_ADMIN_ID\"]}},\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json
         nanobot gateway
     
     environment:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-      # Estas variables las tomará el gateway automáticamente
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
       - PYTHONUNBUFFERED=1
