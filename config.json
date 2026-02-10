@@ -1,7 +1,17 @@
 {
   "providers": {
-    "openrouter": {
-      "apiKey": "${OPEN_ROUTER_KEY}"
+    "openai": {
+      "apiKey": "${DEEPSEEK_API_KEY}",
+      "baseURL": "https://api.deepseek.com"
+    }
+  },
+  "telegram": {
+    "token": "${TELEGRAM_BOT_TOKEN}",
+    "admins": ["${TELEGRAM_ADMIN_ID}"]
+  },
+  "agents": {
+    "defaults": {
+      "model": "deepseek-chat"
     }
   }
 }
