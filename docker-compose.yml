@@ -5,20 +5,22 @@ services:
     build: .
     container_name: nanobot_ai
     restart: always
-    # Sobrescribimos el Entrypoint para usar comandos de shell
+    # Usamos shell para poder crear el archivo de configuración antes de arrancar
     entrypoint: ["/bin/sh", "-c"]
     
-    # CAMBIO IMPORTANTE: Cambiamos 'nanobot start' por 'nanobot run'
+    # EL CAMBIO CLAVE: Usamos 'nanobot gateway'
     command: 
       - |
         mkdir -p /root/.nanobot
         echo "{\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"telegram\":{\"token\":\"$TELEGRAM_BOT_TOKEN\",\"admins\":[\"$TELEGRAM_ADMIN_ID\"]},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json
-        nanobot run
+        nanobot gateway
     
     environment:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+      # A veces Python necesita esto para mostrar los logs en tiempo real
+      - PYTHONUNBUFFERED=1
     
     volumes:
       - nanobot_session_data:/root/.nanobot
