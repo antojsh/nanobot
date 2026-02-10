@@ -9,8 +9,9 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       # Si usas otras, añádelas igual
     volumes:
-      # Esto es VITAL para que no pierdas la sesión de WhatsApp al reiniciar
       - nanobot_data:/root/.nanobot
+      # ESTA LÍNEA MAPEZA TU ARCHIVO LOCAL AL CONTENEDOR:
+      - ./config/config.json:/root/.nanobot/config.json
     ports:
       - "18790:18790"
     # Cambiamos el comando por defecto para que inicie el servicio
