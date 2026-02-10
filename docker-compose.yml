@@ -5,19 +5,19 @@ services:
     build: .
     container_name: nanobot_ai
     restart: always
-    # Aquí es donde ocurre la magia sin necesidad de archivos config.json en el repo
-    command: >
-      sh -c 'mkdir -p /root/.nanobot && 
-      echo "{\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"telegram\":{\"token\":\"$TELEGRAM_BOT_TOKEN\",\"admins\":[\"$TELEGRAM_ADMIN_ID\"]},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json && 
-      nanobot start'
+    # Sobrescribimos el Entrypoint para poder usar comandos de shell
+    entrypoint: ["/bin/sh", "-c"]
+    command: 
+      - |
+        mkdir -p /root/.nanobot
+        echo "{\"providers\":{\"openai\":{\"apiKey\":\"$DEEPSEEK_API_KEY\",\"baseURL\":\"https://api.deepseek.com\"}},\"telegram\":{\"token\":\"$TELEGRAM_BOT_TOKEN\",\"admins\":[\"$TELEGRAM_ADMIN_ID\"]},\"agents\":{\"defaults\":{\"model\":\"deepseek-chat\"}}}" > /root/.nanobot/config.json
+        nanobot start
     
-    # Solo las variables que Dokploy inyectará
     environment:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
     
-    # Solo el volumen de datos (para no perder la sesión del bot)
     volumes:
       - nanobot_session_data:/root/.nanobot
     
